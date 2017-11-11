@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{84A7F1E3-742F-42D0-B974-FFDC8ABC401B}</ProjectGuid>
-    <RootNamespace>UnifiedStreamingTask</RootNamespace>
+    <ProjectGuid>{5EFC6018-6F93-4994-8376-F7E87ADEEB4E}</ProjectGuid>
+    <RootNamespace>UnitTests</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,14 +70,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -111,13 +111,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="output_name_generator.cpp" />
-    <ClCompile Include="ts_splitter.cpp" />
+    <ClCompile Include="..\UnifiedStreamingTask\output_name_generator.cpp" />
+    <ClCompile Include="..\UnifiedStreamingTask\test\main.cpp" />
+    <ClCompile Include="..\UnifiedStreamingTask\test\test_output_name_generator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="output_name_generator.hpp" />
-    <ClInclude Include="ts_splitter.hpp" />
+    <ClInclude Include="..\UnifiedStreamingTask\output_name_generator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

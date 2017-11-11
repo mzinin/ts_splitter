@@ -15,21 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\UnifiedStreamingTask\output_name_generator.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="ts_splitter.cpp">
+    <ClCompile Include="..\UnifiedStreamingTask\test\main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="output_name_generator.cpp">
+    <ClCompile Include="..\UnifiedStreamingTask\test\test_output_name_generator.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ts_splitter.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="output_name_generator.hpp">
+    <ClInclude Include="..\UnifiedStreamingTask\output_name_generator.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
