@@ -111,11 +111,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\UnifiedStreamingTask\error.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\output_name_generator.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\test\main.cpp" />
+    <ClCompile Include="..\UnifiedStreamingTask\test\test_error.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\test\test_output_name_generator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\UnifiedStreamingTask\error.hpp" />
     <ClInclude Include="..\UnifiedStreamingTask\output_name_generator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

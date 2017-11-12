@@ -2,12 +2,14 @@
 #include <iostream>
 
 extern uint16_t testOutputNameGenerator();
+extern uint16_t testError();
 
 int main()
 {
 	uint16_t failures = 0;
 
 	failures += testOutputNameGenerator();
+	failures += testError();
 
 	if (failures == 0)
 	{
