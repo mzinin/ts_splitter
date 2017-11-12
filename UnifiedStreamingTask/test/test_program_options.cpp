@@ -150,6 +150,10 @@ uint16_t testProgramOptions()
 	expected = { Error::ARGUMENT_WITHOUT_OPTION, true, "intput.ts", "", "" };
 	failures += 1 - runTest("ErrorNoOption", args, expected);
 
+	args = { "ts_plitter", "-i", "intput.ts", "-audio_output", "audio.out" };
+	expected = { Error::UNKNOWN_OPTION, true, "intput.ts", "", "" };
+	failures += 1 - runTest("ErrorWrongOption", args, expected);
+
 	// test repeated options
 	args = { "ts_plitter", "-i", "intput1.ts", "-oa", "audio.out", "-i", "intput2.ts" };
 	expected = { Error::OK, false, "intput2.ts", "audio.out", "" };

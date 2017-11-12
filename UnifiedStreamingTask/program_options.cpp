@@ -54,6 +54,11 @@ void ProgramOptions::init(int argc, const char* const * argv)
 			audioOutputName_ = argv[i + 1];
 		else if (strcmp(arg, "-ov") == 0)
 			videoOutputName_ = argv[i + 1];
+		else
+		{
+			helpRequested_ = true;
+			throw Error(Error::UNKNOWN_OPTION, arg);
+		}
 
 		i += 2;
 	}

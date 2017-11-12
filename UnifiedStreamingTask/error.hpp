@@ -13,7 +13,8 @@ public:
 	{
 		OK = 0,							///< No error.
 		NO_OPTION_ARGUMENT = 1,			///< Command line argument missing.
-		ARGUMENT_WITHOUT_OPTION = 2,	///< Argument with no option (key).
+		ARGUMENT_WITHOUT_OPTION = 2,	///< Argument without option.
+		UNKNOWN_OPTION = 3,				///< Unknown command line option.
 	};
 
 	/// @brief Constructor.

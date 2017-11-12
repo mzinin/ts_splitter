@@ -38,6 +38,9 @@ std::string Error::codeDescription(uint16_t code)
 	case ARGUMENT_WITHOUT_OPTION:
 		result = "Command line's argument without option";
 		break;
+	case UNKNOWN_OPTION:
+		result = "Unknown command line option";
+		break;
 	default:
 		result = "Unknown error";
 		break;
