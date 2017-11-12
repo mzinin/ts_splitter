@@ -29,11 +29,14 @@ std::string Error::codeDescription(uint16_t code)
 	std::string result;
 	switch (code)
 	{
-	case Error::OK:
+	case OK:
 		result = "No error";
 		break;
-	case Error::NO_OPTION_ARGUMENT:
+	case NO_OPTION_ARGUMENT:
 		result = "Command line option's argument is missing";
+		break;
+	case ARGUMENT_WITHOUT_OPTION:
+		result = "Command line's argument without option";
 		break;
 	default:
 		result = "Unknown error";

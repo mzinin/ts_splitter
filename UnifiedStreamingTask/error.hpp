@@ -11,8 +11,9 @@ public:
 	/// @brief Error codes
 	enum : uint16_t
 	{
-		OK = 0,					///< No error.
-		NO_OPTION_ARGUMENT = 1	///< Command line argument missing.
+		OK = 0,							///< No error.
+		NO_OPTION_ARGUMENT = 1,			///< Command line argument missing.
+		ARGUMENT_WITHOUT_OPTION = 2,	///< Argument with no option (key).
 	};
 
 	/// @brief Constructor.

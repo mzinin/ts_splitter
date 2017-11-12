@@ -3,6 +3,7 @@
 
 extern uint16_t testOutputNameGenerator();
 extern uint16_t testError();
+extern uint16_t testProgramOptions();
 
 int main()
 {
@@ -10,6 +11,7 @@ int main()
 
 	failures += testOutputNameGenerator();
 	failures += testError();
+	failures += testProgramOptions();
 
 	if (failures == 0)
 	{

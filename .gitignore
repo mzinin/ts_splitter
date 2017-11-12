@@ -259,5 +259,3 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-/UnifiedStreamingTask/program_options.hpp
-/UnifiedStreamingTask/program_options.cpp
