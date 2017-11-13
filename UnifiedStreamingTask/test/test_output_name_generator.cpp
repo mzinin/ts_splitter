@@ -15,11 +15,11 @@ namespace
 		std::cout << "Running OutputNameGenerator." << testName << " ... ";
 
 		OutputNameGenerator ong(nameExample);
-		const bool result = ong.getName(fileNumber) == expectedName;
+		const bool result = ong.name(fileNumber) == expectedName;
 
 		std::cout << (result ? "OK" : "FAIL") << std::endl;
 		if (!result)
-			std::cerr << "Got " << ong.getName(fileNumber) << " instead of " << expectedName << std::endl;
+			std::cerr << "Got " << ong.name(fileNumber) << " instead of " << expectedName << std::endl;
 
 		return result;
 	}
@@ -31,20 +31,20 @@ uint16_t testOutputNameGenerator()
 {
 	uint16_t failures = 0;
 
-	failures += 1 - runTest("FirstFile_Number_Extenson", "video_1.out", 1, "video_1.out");
-	failures += 1 - runTest("SecondFile_Number_Extenson", "video_1.out", 2, "video_2.out");
+	failures += 1 - runTest("name_NumberExtenson_File1", "video_1.out", 1, "video_1.out");
+	failures += 1 - runTest("name_NumberExtenson_File2", "video_1.out", 2, "video_2.out");
 
-	failures += 1 - runTest("FirstFile_NoNumber_Extenson", "audio.out", 1, "audio.out");
-	failures += 1 - runTest("SecondFile_NoNumber_Extenson", "audio.out", 2, "audio_2.out");
+	failures += 1 - runTest("name_NoNumberExtenson_File1", "audio.out", 1, "audio.out");
+	failures += 1 - runTest("name_NoNumberExtenson_File2", "audio.out", 2, "audio_2.out");
 
-	failures += 1 - runTest("FirstFile_Number_NoExtenson", "video_1", 1, "video_1");
-	failures += 1 - runTest("SecondFile_Number_NoExtenson", "video_1", 2, "video_2");
+	failures += 1 - runTest("name_NumberNoExtenson_File1", "video_1", 1, "video_1");
+	failures += 1 - runTest("name_NumberNoExtenson_File2", "video_1", 2, "video_2");
 
-	failures += 1 - runTest("FirstFile_NoNumber_NoExtenson", "audio", 1, "audio");
-	failures += 1 - runTest("SecondFile_NoNumber_NoExtenson", "audio", 2, "audio_2");
+	failures += 1 - runTest("name_NoNumberNoExtenson_File1", "audio", 1, "audio");
+	failures += 1 - runTest("name_NoNumberNoExtenson_File2", "audio", 2, "audio_2");
 
-	failures += 1 - runTest("FirstFile_Uninitialized", "", 1, "");
-	failures += 1 - runTest("SecondFile_Uninitialized", "", 2, "");
+	failures += 1 - runTest("name_Uninitialized_File1", "", 1, "");
+	failures += 1 - runTest("name_Uninitialized_File2", "", 2, "");
 
 	return failures;
 }

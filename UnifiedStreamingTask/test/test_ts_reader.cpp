@@ -236,7 +236,7 @@ uint16_t testTsReader()
 	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
 	std::ostringstream payload;
 	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	failures += 1 - runTest("Video_OnePacket", input, Error::OK, payload.str(), 1);
+	failures += 1 - runTest("readAll_Video1Packet_OK", input, Error::OK, payload.str(), 1);
 
 	// 2 video packets, start of elementary stream and continuation
 	input.swap(std::stringstream());
@@ -245,7 +245,7 @@ uint16_t testTsReader()
 	payload.swap(std::ostringstream());
 	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
 	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
-	failures += 1 - runTest("Video_TwoPackets", input, Error::OK, payload.str(), 1);
+	failures += 1 - runTest("readAll_Video2Packets_OK", input, Error::OK, payload.str(), 1);
 
 	// 3 video packets, start of TS is not start of ES
 	input.swap(std::stringstream());
@@ -255,7 +255,7 @@ uint16_t testTsReader()
 	payload.swap(std::ostringstream());
 	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
 	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
-	failures += 1 - runTest("TsStart_Not_EsStart", input, Error::OK, payload.str(), 1);
+	failures += 1 - runTest("readAll_TsStartNotEsStart_OK", input, Error::OK, payload.str(), 1);
 
 	// corrupted TS start with sync byte
 	input.swap(std::stringstream());
@@ -265,7 +265,7 @@ uint16_t testTsReader()
 	payload.swap(std::ostringstream());
 	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
 	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
-	failures += 1 - runTest("Corrupted_TsStart_SyncByte", input, Error::OK, payload.str(), 1);
+	failures += 1 - runTest("readAll_CorruptedTsStartWithSyncByte_OK", input, Error::OK, payload.str(), 1);
 
 	// corrupted TS start without sync byte
 	input.swap(std::stringstream());
@@ -275,7 +275,7 @@ uint16_t testTsReader()
 	payload.swap(std::ostringstream());
 	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
 	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
-	failures += 1 - runTest("Corrupted_TsStart_NoSyncByte", input, Error::OK, payload.str(), 1);
+	failures += 1 - runTest("readAll_CorruptedTsStartWithoutSyncByte_OK", input, Error::OK, payload.str(), 1);
 
 	// PAT packet and video packet
 	input.swap(std::stringstream());
@@ -283,7 +283,7 @@ uint16_t testTsReader()
 	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
 	payload.swap(std::ostringstream());
 	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	failures += 1 - runTest("Pat_And_Video", input, Error::OK, payload.str(), 1);
+	failures += 1 - runTest("readAll_PatAndVideoPackets_OK", input, Error::OK, payload.str(), 1);
 
 	// Null packet and video packet
 	input.swap(std::stringstream());
@@ -291,14 +291,14 @@ uint16_t testTsReader()
 	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
 	payload.swap(std::ostringstream());
 	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	failures += 1 - runTest("Null_And_Video", input, Error::OK, payload.str(), 1);
+	failures += 1 - runTest("readAll_NullAndVideoPackets_OK", input, Error::OK, payload.str(), 1);
 
 	// 1 audio packet, start of elementary stream
 	input.swap(std::stringstream());
 	input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
 	payload.swap(std::ostringstream());
 	payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
-	failures += 1 - runTest("Audio_OnePacket", input, Error::OK, payload.str(), 1);
+	failures += 1 - runTest("readAll_Audio1Packet_OK", input, Error::OK, payload.str(), 1);
 
 	// 2 audio packets, start of elementary stream and continuation
 	input.swap(std::stringstream());
@@ -307,7 +307,7 @@ uint16_t testTsReader()
 	payload.swap(std::ostringstream());
 	payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
 	payload.write(reinterpret_cast<const char*>(audioPayload2.data()), audioPayload2.size());
-	failures += 1 - runTest("Audio_TwoPackets", input, Error::OK, payload.str(), 1);
+	failures += 1 - runTest("readAll_Audio2Packets_OK", input, Error::OK, payload.str(), 1);
 
 	// 2 elementary streams
 	input.swap(std::stringstream());
@@ -320,27 +320,27 @@ uint16_t testTsReader()
 	payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
 	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
 	payload.write(reinterpret_cast<const char*>(audioPayload2.data()), audioPayload2.size());
-	failures += 1 - runTest("Audio_And_Video", input, Error::OK, payload.str(), 2);
+	failures += 1 - runTest("readAll_AudioAndVideoPackets_OK", input, Error::OK, payload.str(), 2);
 
 	// Short input
 	input.swap(std::stringstream());
 	input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() / 2);
-	failures += 1 - runTest("Short_Input", input, Error::CORRUPTED_INPUT, "", 0);
+	failures += 1 - runTest("readAll_ShortInput_Exception", input, Error::CORRUPTED_INPUT, "", 0);
 
 	// Empty input
 	input.swap(std::stringstream());
-	failures += 1 - runTest("Empty_Input", input, Error::CORRUPTED_INPUT, "", 0);
+	failures += 1 - runTest("readAll_EmptyInput_Exception", input, Error::CORRUPTED_INPUT, "", 0);
 
 	// Bad input
 	input.swap(std::stringstream());
 	input.peek();
-	failures += 1 - runTest("Bad_Input", input, Error::CONSTRUCTION_ERROR, "", 0);
+	failures += 1 - runTest("ctor_BadInput_Exception", input, Error::CONSTRUCTION_ERROR, "", 0);
 
 	// Not a TS stream
 	input.swap(std::stringstream());
 	input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() - 20);
 	input.write(reinterpret_cast<const char*>(videoPacket1.data() + 10), videoPacket1.size() - 20);
-	failures += 1 - runTest("Not_Ts_Stream", input, Error::NOT_TS_STREAM, "", 0);
+	failures += 1 - runTest("readAll_NotTsStream_Exception", input, Error::NOT_TS_STREAM, "", 0);
 
 	// Corrupted TS end
 	input.swap(std::stringstream());
@@ -350,7 +350,7 @@ uint16_t testTsReader()
 	payload.swap(std::ostringstream());
 	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
 	payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
-	failures += 1 - runTest("Corrupted_TsEnd", input, Error::CORRUPTED_INPUT, payload.str(), 2);
+	failures += 1 - runTest("readAll_CorruptedTsEnd_Exception", input, Error::CORRUPTED_INPUT, payload.str(), 2);
 
 	return failures;
 }

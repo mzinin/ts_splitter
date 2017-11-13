@@ -28,7 +28,7 @@ OutputNameGenerator::OutputNameGenerator(const std::string& nameExample)
 	}
 }
 
-std::string OutputNameGenerator::getName(uint16_t fileNumber) const
+std::string OutputNameGenerator::name(uint16_t fileNumber) const
 {
 	if (baseName_.empty())
 		return std::string();

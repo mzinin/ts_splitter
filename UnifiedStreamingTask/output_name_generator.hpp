@@ -18,7 +18,7 @@ public:
 	/// @brief Generate name for file.
 	/// @param[in] fileNumber - File sequence number.
 	/// @returns File name.
-	std::string getName(uint16_t fileNumber) const;
+	std::string name(uint16_t fileNumber) const;
 
 private:
 	/// @brief Base name for all generated file names.

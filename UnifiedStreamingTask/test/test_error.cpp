@@ -68,29 +68,29 @@ uint16_t testError()
 	uint16_t failures = 0;
 	const uint16_t badErrorCode = -1;
 
-	failures += 1 - runTest("What_NoError_NoMessage", WHAT, Error::OK, "");
-	failures += 1 - runTest("What_Error_NoMessage", WHAT, Error::NO_OPTION_ARGUMENT, "");
-	failures += 1 - runTest("What_BadError_NoMessage", WHAT, badErrorCode, "");
+	failures += 1 - runTest("what_NoErrorNoMessage", WHAT, Error::OK, "");
+	failures += 1 - runTest("what_ErrorNoMessage", WHAT, Error::NO_OPTION_ARGUMENT, "");
+	failures += 1 - runTest("what_UnknownErrorNoMessage", WHAT, badErrorCode, "");
 
-	failures += 1 - runTest("What_NoError_Message", WHAT, Error::OK, "additional info");
-	failures += 1 - runTest("What_Error_Message", WHAT, Error::NO_OPTION_ARGUMENT, "additional info");
-	failures += 1 - runTest("What_BadError_Message", WHAT, badErrorCode, "additional info");
+	failures += 1 - runTest("what_NoErrorMessage", WHAT, Error::OK, "additional info");
+	failures += 1 - runTest("what_ErrorMessage", WHAT, Error::NO_OPTION_ARGUMENT, "additional info");
+	failures += 1 - runTest("what_UnknownErrorMessage", WHAT, badErrorCode, "additional info");
 
-	failures += 1 - runTest("What_NoError_NoMessage", CODE, Error::OK, "");
-	failures += 1 - runTest("What_Error_NoMessage", CODE, Error::NO_OPTION_ARGUMENT, "");
-	failures += 1 - runTest("What_BadError_NoMessage", CODE, badErrorCode, "");
+	failures += 1 - runTest("code_NoErrorNoMessage", CODE, Error::OK, "");
+	failures += 1 - runTest("code_ErrorNoMessage", CODE, Error::NO_OPTION_ARGUMENT, "");
+	failures += 1 - runTest("code_UnknownErrorNoMessage", CODE, badErrorCode, "");
 
-	failures += 1 - runTest("What_NoError_Message", CODE, Error::OK, "additional info");
-	failures += 1 - runTest("What_Error_Message", CODE, Error::NO_OPTION_ARGUMENT, "additional info");
-	failures += 1 - runTest("What_BadError_Message", CODE, badErrorCode, "additional info");
+	failures += 1 - runTest("code_NoErrorMessage", CODE, Error::OK, "additional info");
+	failures += 1 - runTest("code_ErrorMessage", CODE, Error::NO_OPTION_ARGUMENT, "additional info");
+	failures += 1 - runTest("code_UnknownErrorMessage", CODE, badErrorCode, "additional info");
 
-	failures += 1 - runTest("What_NoError_NoMessage", MESSAGE, Error::OK, "");
-	failures += 1 - runTest("What_Error_NoMessage", MESSAGE, Error::NO_OPTION_ARGUMENT, "");
-	failures += 1 - runTest("What_BadError_NoMessage", MESSAGE, badErrorCode, "");
+	failures += 1 - runTest("message_NoErrorNoMessage", MESSAGE, Error::OK, "");
+	failures += 1 - runTest("message_ErrorNoMessage", MESSAGE, Error::NO_OPTION_ARGUMENT, "");
+	failures += 1 - runTest("message_UnknownErrorNoMessage", MESSAGE, badErrorCode, "");
 
-	failures += 1 - runTest("What_NoError_Message", MESSAGE, Error::OK, "additional info");
-	failures += 1 - runTest("What_Error_Message", MESSAGE, Error::NO_OPTION_ARGUMENT, "additional info");
-	failures += 1 - runTest("What_BadError_Message", MESSAGE, badErrorCode, "additional info");
+	failures += 1 - runTest("message_NoErrorMessage", MESSAGE, Error::OK, "additional info");
+	failures += 1 - runTest("message_ErrorMessage", MESSAGE, Error::NO_OPTION_ARGUMENT, "additional info");
+	failures += 1 - runTest("message_UnknownErrorMessage", MESSAGE, badErrorCode, "additional info");
 
 	return failures;
 }
