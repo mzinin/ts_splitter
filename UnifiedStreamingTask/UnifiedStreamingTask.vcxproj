@@ -115,12 +115,15 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="output_name_generator.cpp" />
     <ClCompile Include="program_options.cpp" />
+    <ClCompile Include="ts_reader.cpp" />
     <ClCompile Include="ts_splitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="error.hpp" />
+    <ClInclude Include="message_types.hpp" />
     <ClInclude Include="output_name_generator.hpp" />
     <ClInclude Include="program_options.hpp" />
+    <ClInclude Include="ts_reader.hpp" />
     <ClInclude Include="ts_splitter.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

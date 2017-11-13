@@ -41,6 +41,15 @@ std::string Error::codeDescription(uint16_t code)
 	case UNKNOWN_OPTION:
 		result = "Unknown command line option";
 		break;
+	case CONSTRUCTION_ERROR:
+		result = "Failed to create object";
+		break;
+	case CORRUPTED_INPUT:
+		result = "Input TS tream is corrupted";
+		break;
+	case NOT_TS_STREAM:
+		result = "Input stream is not TS";
+		break;
 	default:
 		result = "Unknown error";
 		break;

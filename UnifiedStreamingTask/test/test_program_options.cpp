@@ -43,7 +43,7 @@ namespace
 
 		bool result = true;
 		std::ostringstream failureDescription;
-		uint16_t errorCode = Error::OK;
+		Error error{ Error::OK, "" };
 
 		ProgramOptions po(args.front());
 		try
@@ -52,18 +52,23 @@ namespace
 			for (size_t i = 0; i < args.size(); ++i)
 				argv[i] = args[i].c_str();
 
-			po.init(argv.size(), argv.data());
+			po.init(static_cast<int>(argv.size()), argv.data());
 		}
 		catch (const Error& err)
 		{
-			errorCode = err.code();
+			error = err;
+		}
+		catch (const std::exception& e)
+		{
+			result = false;
+			failureDescription << "Unexpected exception caught: " << e.what() << std::endl;
 		}
 
-		if (errorCode != expected.errorCode)
+		if (error.code() != expected.errorCode)
 		{
 			result = false;
 			if (expected.errorCode == Error::OK)
-				failureDescription << "Unexpected exception caught: " << errorCode << std::endl;
+				failureDescription << "Unexpected exception caught: " << error.message() << std::endl;
 			else
 				failureDescription << "No expected exception caught" << std::endl;
 		}
@@ -88,11 +93,9 @@ namespace
 			failureDescription << "Got video output '" << po.videoOutputName() << "' instead of '" << expected.videoOutputName << "'" << std::endl;
 		}
 
-
 		std::cout << (result ? "OK" : "FAIL") << std::endl;
 		if (!result)
 			std::cout << failureDescription.str();
-
 		return result;
 	}
 }

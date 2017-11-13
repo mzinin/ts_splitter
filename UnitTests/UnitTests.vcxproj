@@ -118,11 +118,15 @@
     <ClCompile Include="..\UnifiedStreamingTask\test\test_error.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\test\test_output_name_generator.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\test\test_program_options.cpp" />
+    <ClCompile Include="..\UnifiedStreamingTask\test\test_ts_reader.cpp" />
+    <ClCompile Include="..\UnifiedStreamingTask\ts_reader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\UnifiedStreamingTask\error.hpp" />
+    <ClInclude Include="..\UnifiedStreamingTask\message_types.hpp" />
     <ClInclude Include="..\UnifiedStreamingTask\output_name_generator.hpp" />
     <ClInclude Include="..\UnifiedStreamingTask\program_options.hpp" />
+    <ClInclude Include="..\UnifiedStreamingTask\ts_reader.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
