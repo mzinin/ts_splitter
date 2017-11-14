@@ -82,7 +82,7 @@ void TsReader::findFirstPacket()
 			return;
 		}
 		// that's not a TS stream
-		throw Error(Error::NOT_TS_STREAM);
+		throw Error(Error::CORRUPTED_INPUT);
 	}
 
 	// there is more than 1 packet
@@ -99,15 +99,13 @@ void TsReader::findFirstPacket()
 
 		// read 1 byte from input and put into buffer
 		buffer_[tsPacketSize + i] = input_.get();
-		if (input_.eof())
-			throw Error(Error::NOT_TS_STREAM);
-		else if (!input_.good())
-			throw Error(Error::CORRUPTED_INPUT, "failed to read from stream");
+		if (!input_.good())
+			throw Error(Error::CORRUPTED_INPUT, "failed to find packet");
 		++i;
 	}
 
-	// First ts packet size is checked, but there is no sync byte - that's not a TS stream
-	throw Error(Error::NOT_TS_STREAM);
+	// packet is not found
+	throw Error(Error::CORRUPTED_INPUT, "failed to find packet");
 }
 
 void TsReader::readPacket()

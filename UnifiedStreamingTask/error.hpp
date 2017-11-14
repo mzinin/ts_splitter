@@ -17,7 +17,6 @@ public:
 		UNKNOWN_OPTION = 3,				///< Unknown command line option.
 		CONSTRUCTION_ERROR = 4,			///< Error creating some object.
 		CORRUPTED_INPUT = 5,   		    ///< Input stream is corrupted.
-		NOT_TS_STREAM = 6,				///< Input stream is not TS.
 	};
 
 	/// @brief Constructor.

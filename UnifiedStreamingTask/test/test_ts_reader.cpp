@@ -340,7 +340,7 @@ uint16_t testTsReader()
 	input.swap(std::stringstream());
 	input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() - 20);
 	input.write(reinterpret_cast<const char*>(videoPacket1.data() + 10), videoPacket1.size() - 20);
-	failures += 1 - runTest("readAll_NotTsStream_Exception", input, Error::NOT_TS_STREAM, "", 0);
+	failures += 1 - runTest("readAll_NotTsStream_Exception", input, Error::CORRUPTED_INPUT, "", 0);
 
 	// Corrupted TS end
 	input.swap(std::stringstream());

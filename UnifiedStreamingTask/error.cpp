@@ -47,9 +47,6 @@ std::string Error::codeDescription(uint16_t code)
 	case CORRUPTED_INPUT:
 		result = "Input TS tream is corrupted";
 		break;
-	case NOT_TS_STREAM:
-		result = "Input stream is not TS";
-		break;
 	default:
 		result = "Unknown error";
 		break;
