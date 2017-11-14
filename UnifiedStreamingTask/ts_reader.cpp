@@ -2,7 +2,6 @@
 #include "ts_reader.hpp"
 
 #include <cstring>
-#include <iostream>
 
 
 namespace
@@ -16,14 +15,12 @@ namespace
 		uint16_t pid;
 		uint16_t payloadOffset;
 		uint8_t seqNumber;
-		uint8_t syncByte;
 		bool isCorrupted;
 		bool newEsPacket;
 		bool hasPayload;
 
 		TsPacket(const std::vector<uint8_t>& data)
 		{
-			syncByte = data[0];
 			isCorrupted = data[1] & 0x80;
 			newEsPacket = data[1] & 0x40;
 			pid = ((data[1] & 0x1F) << 8) + data[2];
@@ -45,10 +42,11 @@ namespace
 	}
 }
 
-TsReader::TsReader(std::istream& input, OnPayload handler)
+TsReader::TsReader(std::istream& input, std::ostream& log, OnPayload handler)
 	: input_(input)
+	, log_(log)
 	, handler_(handler)
-	, buffer_(2 * tsPacketSize, 0)
+	, buffer_(tsPacketSize, 0)
 {
 	if (!input_.good())
 		throw Error(Error::CONSTRUCTION_ERROR, "TsReader, bad input");
@@ -58,83 +56,74 @@ TsReader::TsReader(std::istream& input, OnPayload handler)
 
 void TsReader::readAll()
 {
-	findFirstPacket();
-	processPacket();
-
 	while (!input_.eof())
 	{
-		readPacket();
-		processPacket();
+		if (readPacket())
+			processPacket();
 	}
 }
 
-void TsReader::findFirstPacket()
+bool TsReader::readPacket()
 {
-	readPacket();
+	// read data
+	if (!readFromStream(0, tsPacketSize))
+		return false;
 
-	// TS stream consists of only 1 packet
-	if (input_.eof())
+	// check sync byte
+	while (true)
 	{
-		// packet start found
-		if (buffer_[0] == tsSyncByte)
+		// buffer starts with sync byte and either next unread char is also sync byte
+		// or EOF reached - most probably we got a valid packet in buffer
+		if (buffer_[0] == tsSyncByte && (input_.peek() == tsSyncByte || input_.eof()))
+			return true;
+
+		// otherwise search for sync byte
+		size_t offset = 1;
+		while (offset < tsPacketSize && buffer_[offset] != tsSyncByte)
+			++offset;
+
+		if (offset == tsPacketSize)
 		{
-			buffer_.resize(tsPacketSize);
-			return;
+			// no sync byte, that's corrupted packet, move to the next one
+			log_ << "Warning: corrupted TS packet. Skip it." << std::endl;
+			break;
 		}
-		// that's not a TS stream
-		throw Error(Error::CORRUPTED_INPUT);
+		else
+		{
+			// sync byte found, align it with buffer
+			std::memmove(&buffer_[0], &buffer_[offset], tsPacketSize - offset);
+			if (!readFromStream(tsPacketSize - offset, offset))
+				return false;
+		}
 	}
 
-	// there is more than 1 packet
-	size_t i = 0;
-	while (i < tsPacketSize)
-	{
-		// 1st and 2nd packets are found
-		if (buffer_[i] == tsSyncByte && input_.peek() == tsSyncByte)
-		{
-			std::memmove(&buffer_[0], &buffer_[i], tsPacketSize);
-			buffer_.resize(tsPacketSize);
-			return;
-		}
-
-		// read 1 byte from input and put into buffer
-		buffer_[tsPacketSize + i] = input_.get();
-		if (!input_.good())
-			throw Error(Error::CORRUPTED_INPUT, "failed to find packet");
-		++i;
-	}
-
-	// packet is not found
-	throw Error(Error::CORRUPTED_INPUT, "failed to find packet");
+	return false;
 }
 
-void TsReader::readPacket()
+bool TsReader::readFromStream(size_t bufferOffset, size_t size)
 {
-	input_.read(reinterpret_cast<char*>(buffer_.data()), tsPacketSize);
+	input_.read(reinterpret_cast<char*>(buffer_.data() + bufferOffset), size);
+
 	const auto read = input_.gcount();
-
-	if (read != tsPacketSize)
-		throw Error(Error::CORRUPTED_INPUT, "failed to read whole ts packet");
-
-	// to check for eof
-	input_.peek();
+	if (read != size)
+	{
+		if (read)
+			log_ << "Warning: corrupted TS packet. Skip it." << std::endl;
+		if (!input_.eof())
+			throw Error(Error::CORRUPTED_INPUT, "failed to read");
+		return false;
+	}
+	return true;
 }
 
 void TsReader::processPacket()
 {
 	TsPacket pkt(buffer_);
 	
-	// check for sync byte
-	if (pkt.syncByte != tsSyncByte)
-	{
-		std::cerr << "Warning: TS packet has no sync byte. Skip it." << std::endl;
-		return;
-	}
-
 	// check for corrupted packet
 	if (pkt.isCorrupted)
 	{
-		std::cerr << "Warning: TS is corrupted. Skip it." << std::endl;
+		log_ << "Warning: corrupted TS packet. Skip it." << std::endl;
 		return;
 	}
 
@@ -166,7 +155,7 @@ bool TsReader::checkEsStarted(uint16_t pid, bool newEsPacket, uint16_t seq)
 	if (it != streams_.end())
 	{
 		if ((it->second + 1) % 0x10 != seq)
-			std::cerr << "Warning: packet sequence within PID " << pid << " is broken" << std::endl;
+			log_ << "Warning: packet sequence within PID " << pid << " is broken" << std::endl;
 		it->second = seq;
 		return true;
 	}

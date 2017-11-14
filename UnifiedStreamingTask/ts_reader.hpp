@@ -3,7 +3,7 @@
 #include "message_types.hpp"
 
 #include <functional>
-#include <istream>
+#include <iostream>
 #include <map>
 #include <vector>
 
@@ -18,22 +18,27 @@ public:
 
 	/// @brief Constructor.
 	/// @param[in] input - TS input.
+	/// @param[out] log - Stream for log messages.
 	/// @param[in] handler - Paylod handler.
 	/// @throws Error.
-	TsReader(std::istream& input, OnPayload handler);
+	TsReader(std::istream& input, std::ostream& log, OnPayload handler);
 
 	/// @brief Read all available TS packets and produce payloads.
 	/// @throws Error.
 	void readAll();
 
 private:
-	/// @brief Find and read first packet in TS stream.
-	/// @throws Error.
-	void findFirstPacket();
-
 	/// @brief Read packet from TS stream.
-	/// @throws Error.
-	void readPacket();
+	/// @details Calls handler, which may throws exceptions.
+	/// @returns true if valid packet is read, false otherwise.
+	/// @throws Error if input stream is corrupted.
+	bool readPacket();
+
+	/// @brief Read data from input stream into buffer.
+	/// @param[in] bufferOffset - Offset within buffer to store data.
+	/// @param[in] size - Size of data to read.
+	/// @throws Error if input stream is corrupted.
+	bool readFromStream(size_t bufferOffset, size_t size);
 
 	/// @brief Process successfully read packet.
 	/// @details Calls handler, which may throws exceptions.
@@ -50,9 +55,12 @@ private:
 	/// @brief TS input stream.
 	std::istream& input_;
 
+	/// @brief Log output stream.
+	std::ostream& log_;
+
 	/// @brief Payload handler.
 	OnPayload handler_;
-
+	
 	/// @brief Buffer for storing packets.
 	std::vector<uint8_t> buffer_;
 	
