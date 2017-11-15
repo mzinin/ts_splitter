@@ -5,6 +5,7 @@ extern uint16_t testOutputNameGenerator();
 extern uint16_t testError();
 extern uint16_t testProgramOptions();
 extern uint16_t testTsReader();
+extern uint16_t testPayloadParser();
 
 int main()
 {
@@ -14,6 +15,7 @@ int main()
 	failures += testError();
 	failures += testProgramOptions();
 	failures += testTsReader();
+	failures += testPayloadParser();
 
 	if (failures == 0)
 	{

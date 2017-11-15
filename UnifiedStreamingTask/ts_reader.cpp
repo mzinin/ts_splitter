@@ -50,6 +50,8 @@ TsReader::TsReader(std::istream& input, std::ostream& log, OnPayload handler)
 {
 	if (!input_.good())
 		throw Error(Error::CONSTRUCTION_ERROR, "TsReader, bad input");
+	if (!log_.good())
+		throw Error(Error::CONSTRUCTION_ERROR, "TsReader, bad log output");
 	if (!handler_)
 		throw Error(Error::CONSTRUCTION_ERROR, "TsReader, empty handler");
 }
@@ -143,7 +145,7 @@ void TsReader::processPacket()
 	static TsPayload payload;
 	payload.pid = pkt.pid;
 	payload.data = &buffer_[pkt.payloadOffset];
-	payload.length = tsPacketSize - pkt.payloadOffset;
+	payload.size = tsPacketSize - pkt.payloadOffset;
 	handler_(payload);
 }
 

@@ -180,7 +180,7 @@ namespace
 		std::set<uint16_t> pids;
 		auto handler = [&payload, &pids](const TsPayload& p)
 		{
-			payload.write(reinterpret_cast<const char*>(p.data), p.length);
+			payload.write(reinterpret_cast<const char*>(p.data), p.size);
 			pids.insert(p.pid);
 		};
 
@@ -231,8 +231,13 @@ uint16_t testTsReader()
 {
 	uint16_t failures = 0;
 
-	// 1 video packet, start of elementary stream
+	// Bad input
 	std::stringstream input;
+	input.peek();
+	failures += 1 - runTest("ctor_BadInput_Exception", input, Error::CONSTRUCTION_ERROR, "", 0);
+
+	// 1 video packet, start of elementary stream
+	input.swap(std::stringstream());
 	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
 	std::ostringstream payload;
 	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
@@ -372,11 +377,6 @@ uint16_t testTsReader()
 	input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() / 2);
 	input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
 	failures += 1 - runTest("readAll_CorruptedTsMiddleWithoutSyncByte_OK", input, Error::OK, "", 0);
-
-	// Bad input
-	input.swap(std::stringstream());
-	input.peek();
-	failures += 1 - runTest("ctor_BadInput_Exception", input, Error::CONSTRUCTION_ERROR, "", 0);
-
+	
 	return failures;
 }

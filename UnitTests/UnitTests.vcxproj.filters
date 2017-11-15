@@ -42,6 +42,12 @@
     <ClCompile Include="..\UnifiedStreamingTask\test\test_ts_reader.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\UnifiedStreamingTask\payload_parser.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnifiedStreamingTask\test\test_payload_parser.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\UnifiedStreamingTask\output_name_generator.hpp">
@@ -57,6 +63,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="..\UnifiedStreamingTask\message_types.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\UnifiedStreamingTask\payload_parser.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
