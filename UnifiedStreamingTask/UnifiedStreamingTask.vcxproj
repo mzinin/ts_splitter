@@ -114,6 +114,7 @@
     <ClCompile Include="error.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="output_name_generator.cpp" />
+    <ClCompile Include="output_writer.cpp" />
     <ClCompile Include="payload_parser.cpp" />
     <ClCompile Include="program_options.cpp" />
     <ClCompile Include="ts_reader.cpp" />
@@ -123,6 +124,7 @@
     <ClInclude Include="error.hpp" />
     <ClInclude Include="message_types.hpp" />
     <ClInclude Include="output_name_generator.hpp" />
+    <ClInclude Include="output_writer.hpp" />
     <ClInclude Include="payload_parser.hpp" />
     <ClInclude Include="program_options.hpp" />
     <ClInclude Include="ts_reader.hpp" />

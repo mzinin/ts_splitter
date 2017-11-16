@@ -113,11 +113,13 @@
   <ItemGroup>
     <ClCompile Include="..\UnifiedStreamingTask\error.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\output_name_generator.cpp" />
+    <ClCompile Include="..\UnifiedStreamingTask\output_writer.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\payload_parser.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\program_options.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\test\main.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\test\test_error.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\test\test_output_name_generator.cpp" />
+    <ClCompile Include="..\UnifiedStreamingTask\test\test_output_writer.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\test\test_payload_parser.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\test\test_program_options.cpp" />
     <ClCompile Include="..\UnifiedStreamingTask\test\test_ts_reader.cpp" />
@@ -127,6 +129,7 @@
     <ClInclude Include="..\UnifiedStreamingTask\error.hpp" />
     <ClInclude Include="..\UnifiedStreamingTask\message_types.hpp" />
     <ClInclude Include="..\UnifiedStreamingTask\output_name_generator.hpp" />
+    <ClInclude Include="..\UnifiedStreamingTask\output_writer.hpp" />
     <ClInclude Include="..\UnifiedStreamingTask\payload_parser.hpp" />
     <ClInclude Include="..\UnifiedStreamingTask\program_options.hpp" />
     <ClInclude Include="..\UnifiedStreamingTask\ts_reader.hpp" />

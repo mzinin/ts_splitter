@@ -45,7 +45,10 @@ std::string Error::codeDescription(uint16_t code)
 		result = "Failed to create object";
 		break;
 	case CORRUPTED_INPUT:
-		result = "Input TS tream is corrupted";
+		result = "Input TS stream is corrupted";
+		break;
+	case CORRUPTED_OUTPUT:
+		result = "Output stream is corrupted";
 		break;
 	default:
 		result = "Unknown error";
