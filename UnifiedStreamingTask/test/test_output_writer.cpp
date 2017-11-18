@@ -5,7 +5,6 @@
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <streambuf>
@@ -169,77 +168,83 @@ uint16_t testOutputWriter()
 	uint16_t failures = 0;
 
 	// no output names
-	std::unique_ptr<OutputNameGenerator> audioNamer(new OutputNameGenerator());
-	std::unique_ptr<OutputNameGenerator> videoNamer(new OutputNameGenerator());
-	std::vector<EsRawData> rawData;
-	ExpectedResult expected;
-	expected.errorCode = Error::CONSTRUCTION_ERROR;
-	failures += 1 - runTest("ctor_UninitialisedNames_Exception", *audioNamer, *videoNamer, rawData, expected);
+	{
+		OutputNameGenerator audioNamer;
+		OutputNameGenerator videoNamer;
+		std::vector<EsRawData> rawData;
+		ExpectedResult expected{ Error::CONSTRUCTION_ERROR };
+		failures += 1 - runTest("ctor_UninitialisedNames_Exception", audioNamer, videoNamer, rawData, expected);
+	}
 
 	// 1 video raw data
-	audioNamer.reset(new OutputNameGenerator());
-	videoNamer.reset(new OutputNameGenerator("video_1.out"));
-	rawData.clear();
-	rawData.push_back({ videoRawData1.data(), static_cast<uint16_t>(videoRawData1.size()), EsType::VIDEO, 1 });
-	expected.errorCode = Error::OK;
-	expected.outputs.clear();
-	expected.outputs[videoNamer->name(1)] = std::string(videoRawData1.begin(), videoRawData1.end());
-	failures += 1 - runTest("write_Video1RawData_OK", *audioNamer, *videoNamer, rawData, expected);
+	{
+		OutputNameGenerator audioNamer;
+		OutputNameGenerator videoNamer("video_1.out");
+		std::vector<EsRawData> rawData;
+		rawData.push_back({ videoRawData1.data(), static_cast<uint16_t>(videoRawData1.size()), EsType::VIDEO, 1 });
+		ExpectedResult expected{ Error::OK };
+		expected.outputs[videoNamer.name(1)] = std::string(videoRawData1.begin(), videoRawData1.end());
+		failures += 1 - runTest("write_Video1RawData_OK", audioNamer, videoNamer, rawData, expected);
+	}
 
 	// 2 video raw data
-	audioNamer.reset(new OutputNameGenerator());
-	videoNamer.reset(new OutputNameGenerator("video_1.out"));
-	rawData.clear();
-	rawData.push_back({ videoRawData1.data(), static_cast<uint16_t>(videoRawData1.size()), EsType::VIDEO, 1 });
-	rawData.push_back({ videoRawData2.data(), static_cast<uint16_t>(videoRawData2.size()), EsType::VIDEO, 1 });
-	expected.errorCode = Error::OK;
-	expected.outputs.clear();
-	expected.outputs[videoNamer->name(1)] = std::string(videoRawData1.begin(), videoRawData1.end()) +
-		                                    std::string(videoRawData2.begin(), videoRawData2.end());
-	failures += 1 - runTest("write_Video2RawData_OK", *audioNamer, *videoNamer, rawData, expected);
+	{
+		OutputNameGenerator audioNamer;
+		OutputNameGenerator videoNamer("video_1.out");
+		std::vector<EsRawData> rawData;
+		rawData.push_back({ videoRawData1.data(), static_cast<uint16_t>(videoRawData1.size()), EsType::VIDEO, 1 });
+		rawData.push_back({ videoRawData2.data(), static_cast<uint16_t>(videoRawData2.size()), EsType::VIDEO, 1 });
+		ExpectedResult expected{ Error::OK };
+		expected.outputs[videoNamer.name(1)] = std::string(videoRawData1.begin(), videoRawData1.end()) +
+									   		   std::string(videoRawData2.begin(), videoRawData2.end());
+		failures += 1 - runTest("write_Video2RawData_OK", audioNamer, videoNamer, rawData, expected);
+	}
 
 	// audio and video raw data
-	audioNamer.reset(new OutputNameGenerator("audio_1.out"));
-	videoNamer.reset(new OutputNameGenerator("video_1.out"));
-	rawData.clear();
-	rawData.push_back({ videoRawData1.data(), static_cast<uint16_t>(videoRawData1.size()), EsType::VIDEO, 1 });
-	rawData.push_back({ videoRawData2.data(), static_cast<uint16_t>(videoRawData2.size()), EsType::VIDEO, 1 });
-	rawData.push_back({ audioRawData1.data(), static_cast<uint16_t>(audioRawData1.size()), EsType::AUDIO, 1 });
-	rawData.push_back({ audioRawData2.data(), static_cast<uint16_t>(audioRawData2.size()), EsType::AUDIO, 1 });
-	expected.errorCode = Error::OK;
-	expected.outputs.clear();
-	expected.outputs[videoNamer->name(1)] = std::string(videoRawData1.begin(), videoRawData1.end()) +
-		                                    std::string(videoRawData2.begin(), videoRawData2.end());
-	expected.outputs[audioNamer->name(1)] = std::string(audioRawData1.begin(), audioRawData1.end()) +
-		                                    std::string(audioRawData2.begin(), audioRawData2.end());
-	failures += 1 - runTest("write_AudioAndVideoRawData_OK", *audioNamer, *videoNamer, rawData, expected);
+	{
+		OutputNameGenerator audioNamer("audio_1.out");
+		OutputNameGenerator videoNamer("video_1.out");
+		std::vector<EsRawData> rawData;
+		rawData.push_back({ videoRawData1.data(), static_cast<uint16_t>(videoRawData1.size()), EsType::VIDEO, 1 });
+		rawData.push_back({ videoRawData2.data(), static_cast<uint16_t>(videoRawData2.size()), EsType::VIDEO, 1 });
+		rawData.push_back({ audioRawData1.data(), static_cast<uint16_t>(audioRawData1.size()), EsType::AUDIO, 1 });
+		rawData.push_back({ audioRawData2.data(), static_cast<uint16_t>(audioRawData2.size()), EsType::AUDIO, 1 });
+		ExpectedResult expected{ Error::OK };
+		expected.outputs[videoNamer.name(1)] = std::string(videoRawData1.begin(), videoRawData1.end()) +
+											   std::string(videoRawData2.begin(), videoRawData2.end());
+		expected.outputs[audioNamer.name(1)] = std::string(audioRawData1.begin(), audioRawData1.end()) +
+											   std::string(audioRawData2.begin(), audioRawData2.end());
+		failures += 1 - runTest("write_AudioAndVideoRawData_OK", audioNamer, videoNamer, rawData, expected);
+	}
 
 	// 2 video outputs
-	audioNamer.reset(new OutputNameGenerator());
-	videoNamer.reset(new OutputNameGenerator("video_1.out"));
-	rawData.clear();
-	rawData.push_back({ videoRawData1.data(), static_cast<uint16_t>(videoRawData1.size()), EsType::VIDEO, 1 });
-	rawData.push_back({ videoRawData2.data(), static_cast<uint16_t>(videoRawData2.size()), EsType::VIDEO, 2 });
-	expected.errorCode = Error::OK;
-	expected.outputs.clear();
-	expected.outputs[videoNamer->name(1)] = std::string(videoRawData1.begin(), videoRawData1.end());
-	expected.outputs[videoNamer->name(2)] = std::string(videoRawData2.begin(), videoRawData2.end());
-	failures += 1 - runTest("write_Video2Outputs_OK", *audioNamer, *videoNamer, rawData, expected);
+	{
+		OutputNameGenerator audioNamer;
+		OutputNameGenerator videoNamer("video_1.out");
+		std::vector<EsRawData> rawData;
+		rawData.push_back({ videoRawData1.data(), static_cast<uint16_t>(videoRawData1.size()), EsType::VIDEO, 1 });
+		rawData.push_back({ videoRawData2.data(), static_cast<uint16_t>(videoRawData2.size()), EsType::VIDEO, 2 });
+		ExpectedResult expected{ Error::OK };
+		expected.outputs[videoNamer.name(1)] = std::string(videoRawData1.begin(), videoRawData1.end());
+		expected.outputs[videoNamer.name(2)] = std::string(videoRawData2.begin(), videoRawData2.end());
+		failures += 1 - runTest("write_Video2Outputs_OK", audioNamer, videoNamer, rawData, expected);
+	}
 
 	// discard audio
-	audioNamer.reset(new OutputNameGenerator());
-	videoNamer.reset(new OutputNameGenerator("video_1.out"));
-	rawData.clear();
-	rawData.push_back({ videoRawData1.data(), static_cast<uint16_t>(videoRawData1.size()), EsType::VIDEO, 1 });
-	rawData.push_back({ videoRawData2.data(), static_cast<uint16_t>(videoRawData2.size()), EsType::VIDEO, 1 });
-	rawData.push_back({ audioRawData1.data(), static_cast<uint16_t>(audioRawData1.size()), EsType::AUDIO, 1 });
-	rawData.push_back({ audioRawData2.data(), static_cast<uint16_t>(audioRawData2.size()), EsType::AUDIO, 1 });
-	expected.errorCode = Error::OK;
-	expected.outputs.clear();
-	expected.outputs[videoNamer->name(1)] = std::string(videoRawData1.begin(), videoRawData1.end()) +
-		                                    std::string(videoRawData2.begin(), videoRawData2.end());
-	expected.outputs[audioNamer->name(1)] = std::string();
-	failures += 1 - runTest("write_DiscardAudio_OK", *audioNamer, *videoNamer, rawData, expected);
+	{
+		OutputNameGenerator audioNamer;
+		OutputNameGenerator videoNamer("video_1.out");
+		std::vector<EsRawData> rawData;
+		rawData.push_back({ videoRawData1.data(), static_cast<uint16_t>(videoRawData1.size()), EsType::VIDEO, 1 });
+		rawData.push_back({ videoRawData2.data(), static_cast<uint16_t>(videoRawData2.size()), EsType::VIDEO, 1 });
+		rawData.push_back({ audioRawData1.data(), static_cast<uint16_t>(audioRawData1.size()), EsType::AUDIO, 1 });
+		rawData.push_back({ audioRawData2.data(), static_cast<uint16_t>(audioRawData2.size()), EsType::AUDIO, 1 });
+		ExpectedResult expected{ Error::OK };
+		expected.outputs[videoNamer.name(1)] = std::string(videoRawData1.begin(), videoRawData1.end()) +
+											   std::string(videoRawData2.begin(), videoRawData2.end());
+		expected.outputs[audioNamer.name(1)] = std::string();
+		failures += 1 - runTest("write_DiscardAudio_OK", audioNamer, videoNamer, rawData, expected);
+	}
 
 	return failures;
 }

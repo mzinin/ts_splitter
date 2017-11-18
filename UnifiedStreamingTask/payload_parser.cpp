@@ -80,8 +80,8 @@ namespace
 			result ^= uint32_t(*data++) << 24;
 			for (int i = 0; i < 8; ++i)
 			{
-				const auto xor = ((result & 0x80000000u) >> 31) * 0x04C11DB7u;
-				result = (result << 1) ^ xor;
+				const auto xorArg = ((result & 0x80000000u) >> 31) * 0x04C11DB7u;
+				result = (result << 1) ^ xorArg;
 			}
 		}
 		return result;

@@ -96,7 +96,7 @@ OutputWriter::Output& OutputWriter::chooseOutput(EsType type, uint16_t number)
 		return dummyOutput;
 
 	// try insert new output
-	const auto insertionResult = outputs->insert({ number, Output{ generator->name(number), nullptr} });
+	const auto insertionResult = outputs->insert(std::make_pair(number, Output{ generator->name(number), nullptr }));
 	auto& output = insertionResult.first->second;
 
 	// ES already detected or no output needed for this ES

@@ -27,7 +27,7 @@ public:
 
 	/// @brief Get error message as C string.
 	/// @returns C string with error description.
-	const char* what() const override;
+	const char* what() const noexcept override;
 
 	/// @brief Get error code.
 	uint16_t code() const;

@@ -9,7 +9,7 @@ Error::Error(uint16_t code, const std::string& msg)
 		message_ += ": " + msg;
 }
 
-const char* Error::what() const
+const char* Error::what() const noexcept
 {
 	return message_.c_str();
 }

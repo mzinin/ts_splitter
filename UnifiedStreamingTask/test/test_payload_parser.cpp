@@ -5,6 +5,7 @@
 #include <set>
 #include <sstream>
 #include <vector>
+#include <memory>
 
 
 // audio payloads and raw data
@@ -302,102 +303,122 @@ uint16_t testPayloadParser()
 	uint16_t failures = 0;
 
 	// 1 video payload with header
-	std::vector<TsPayload> payloads;
-	payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
-	std::ostringstream videoRawData;
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
-	ExpectedResult expected = { Error::OK, 0, 1, "", videoRawData.str() };
-	failures += 1 - runTest("parse_Video1PayloadWithHeader_OK", payloads, expected);
+	{
+		std::vector<TsPayload> payloads;
+		payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
+		std::ostringstream videoRawData;
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
+		ExpectedResult expected{ Error::OK, 0, 1, "", videoRawData.str() };
+		failures += 1 - runTest("parse_Video1PayloadWithHeader_OK", payloads, expected);
+	}
 
 	// 1 video payload without header
-	payloads.clear();
-	payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), videoPid, false });
-	expected = { Error::OK, 0, 0, "", "" };
-	failures += 1 - runTest("parse_Video1PayloadWithoutHeader_OK", payloads, expected);
+	{
+		std::vector<TsPayload> payloads;
+		payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), videoPid, false });
+		ExpectedResult expected{ Error::OK, 0, 0, "", "" };
+		failures += 1 - runTest("parse_Video1PayloadWithoutHeader_OK", payloads, expected);
+	}
 
 	// 2 video payloads with header
-	payloads.clear();
-	payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
-	payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), videoPid, false });
-	videoRawData.swap(std::ostringstream());
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData2.data()), videoRawData2.size());
-	expected = { Error::OK, 0, 1, "", videoRawData.str() };
-	failures += 1 - runTest("parse_Video2PayloadsWithHeader_OK", payloads, expected);
+	{
+		std::vector<TsPayload> payloads;
+		payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
+		payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), videoPid, false });
+		std::ostringstream videoRawData;
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData2.data()), videoRawData2.size());
+		ExpectedResult expected{ Error::OK, 0, 1, "", videoRawData.str() };
+		failures += 1 - runTest("parse_Video2PayloadsWithHeader_OK", payloads, expected);
+	}
 
 	// 2 video payloads without header
-	payloads.clear();
-	payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), videoPid, false });
-	payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
-	videoRawData.swap(std::ostringstream());
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
-	expected = { Error::OK, 0, 1, "", videoRawData.str() };
-	failures += 1 - runTest("parse_Video2PayloadsWithoutHeader_OK", payloads, expected);
+	{
+		std::vector<TsPayload> payloads;
+		payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), videoPid, false });
+		payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
+		std::ostringstream videoRawData;
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
+		ExpectedResult expected{ Error::OK, 0, 1, "", videoRawData.str() };
+		failures += 1 - runTest("parse_Video2PayloadsWithoutHeader_OK", payloads, expected);
+	}
 
 	// 1 audio payload with header
-	payloads.clear();
-	payloads.push_back({ audioPayload1.data(), static_cast<uint16_t>(audioPayload1.size()), audioPid, true });
-	std::ostringstream audioRawData;
-	audioRawData.write(reinterpret_cast<const char*>(audioRawData1.data()), audioRawData1.size());
-	expected = { Error::OK, 1, 0, audioRawData.str(), "" };
-	failures += 1 - runTest("parse_Audio1PayloadWithHeader_OK", payloads, expected);
+	{
+		std::vector<TsPayload> payloads;
+		payloads.push_back({ audioPayload1.data(), static_cast<uint16_t>(audioPayload1.size()), audioPid, true });
+		std::ostringstream audioRawData;
+		audioRawData.write(reinterpret_cast<const char*>(audioRawData1.data()), audioRawData1.size());
+		ExpectedResult expected{ Error::OK, 1, 0, audioRawData.str(), "" };
+		failures += 1 - runTest("parse_Audio1PayloadWithHeader_OK", payloads, expected);
+	}
 
 	// audio and video payloads with header
-	payloads.clear();
-	payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
-	payloads.push_back({ audioPayload1.data(), static_cast<uint16_t>(audioPayload1.size()), audioPid, true });
-	payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), videoPid, false });
-	payloads.push_back({ audioPayload2.data(), static_cast<uint16_t>(audioPayload2.size()), audioPid, false });
-	videoRawData.swap(std::ostringstream());
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData2.data()), videoRawData2.size());
-	audioRawData.swap(std::ostringstream());
-	audioRawData.write(reinterpret_cast<const char*>(audioRawData1.data()), audioRawData1.size());
-	audioRawData.write(reinterpret_cast<const char*>(audioRawData2.data()), audioRawData2.size());
-	expected = { Error::OK, 1, 1, audioRawData.str(), videoRawData.str() };
-	failures += 1 - runTest("parse_AudioAndVideoPayloadsWithHeader_OK", payloads, expected);
+	{
+		std::vector<TsPayload> payloads;
+		payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
+		payloads.push_back({ audioPayload1.data(), static_cast<uint16_t>(audioPayload1.size()), audioPid, true });
+		payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), videoPid, false });
+		payloads.push_back({ audioPayload2.data(), static_cast<uint16_t>(audioPayload2.size()), audioPid, false });
+		std::ostringstream videoRawData;
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData2.data()), videoRawData2.size());
+		std::ostringstream audioRawData;
+		audioRawData.write(reinterpret_cast<const char*>(audioRawData1.data()), audioRawData1.size());
+		audioRawData.write(reinterpret_cast<const char*>(audioRawData2.data()), audioRawData2.size());
+		ExpectedResult expected{ Error::OK, 1, 1, audioRawData.str(), videoRawData.str() };
+		failures += 1 - runTest("parse_AudioAndVideoPayloadsWithHeader_OK", payloads, expected);
+	}
 
 	// 2 stream ids in 1 pid
-	payloads.clear();
-	payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
-	payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), audioPid, false });
-	videoRawData.swap(std::ostringstream());
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
-	expected = { Error::OK, 0, 1, "", videoRawData.str() };
-	failures += 1 - runTest("parse_TwoStreamIdsInOnePid_OK", payloads, expected);
+	{
+		std::vector<TsPayload> payloads;
+		payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
+		payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), audioPid, false });
+		std::ostringstream videoRawData;
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
+		ExpectedResult expected{ Error::OK, 0, 1, "", videoRawData.str() };
+		failures += 1 - runTest("parse_TwoStreamIdsInOnePid_OK", payloads, expected);
+	}
 
 	// video and subtitles payloads with header
-	payloads.clear();
-	payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
-	payloads.push_back({ subsPayload1.data(), static_cast<uint16_t>(subsPayload1.size()), audioPid, true });
-	payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), videoPid, false });
-	videoRawData.swap(std::ostringstream());
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData2.data()), videoRawData2.size());
-	expected = { Error::OK, 0, 1, "", videoRawData.str() };
-	failures += 1 - runTest("parse_VideoAndSubsPayloadsWithHeader_OK", payloads, expected);
+	{
+		std::vector<TsPayload> payloads;
+		payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
+		payloads.push_back({ subsPayload1.data(), static_cast<uint16_t>(subsPayload1.size()), audioPid, true });
+		payloads.push_back({ videoPayload2.data(), static_cast<uint16_t>(videoPayload2.size()), videoPid, false });
+		std::ostringstream videoRawData;
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData2.data()), videoRawData2.size());
+		ExpectedResult expected{ Error::OK, 0, 1, "", videoRawData.str() };
+		failures += 1 - runTest("parse_VideoAndSubsPayloadsWithHeader_OK", payloads, expected);
+	}
 
 	// ac3 and video payloads without PMT
-	payloads.clear();
-	payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
-	payloads.push_back({ ac3Payload.data(), static_cast<uint16_t>(ac3Payload.size()), audioPid, true });
-	videoRawData.swap(std::ostringstream());
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
-	expected = { Error::OK, 0, 1, "", videoRawData.str() };
-	failures += 1 - runTest("parse_Ac3AndVideoPayloadsWithoutPmt_OK", payloads, expected);
+	{
+		std::vector<TsPayload> payloads;
+		payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
+		payloads.push_back({ ac3Payload.data(), static_cast<uint16_t>(ac3Payload.size()), audioPid, true });
+		std::ostringstream videoRawData;
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
+		ExpectedResult expected{ Error::OK, 0, 1, "", videoRawData.str() };
+		failures += 1 - runTest("parse_Ac3AndVideoPayloadsWithoutPmt_OK", payloads, expected);
+	}
 
 	// ac3 and video payloads with PMT
-	payloads.clear();
-	payloads.push_back({ patPayload.data(), static_cast<uint16_t>(patPayload.size()), patPid, true });
-	payloads.push_back({ pmtPayload.data(), static_cast<uint16_t>(pmtPayload.size()), pmtPid, true });
-	payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
-	payloads.push_back({ ac3Payload.data(), static_cast<uint16_t>(ac3Payload.size()), audioPid, true });
-	videoRawData.swap(std::ostringstream());
-	videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
-	audioRawData.swap(std::ostringstream());
-	audioRawData.write(reinterpret_cast<const char*>(ac3RawData.data()), ac3RawData.size());
-	expected = { Error::OK, 1, 1, audioRawData.str(), videoRawData.str() };
-	failures += 1 - runTest("parse_Ac3AndVideoPayloadsWithPmt_OK", payloads, expected);
+	{
+		std::vector<TsPayload> payloads;
+		payloads.push_back({ patPayload.data(), static_cast<uint16_t>(patPayload.size()), patPid, true });
+		payloads.push_back({ pmtPayload.data(), static_cast<uint16_t>(pmtPayload.size()), pmtPid, true });
+		payloads.push_back({ videoPayload1.data(), static_cast<uint16_t>(videoPayload1.size()), videoPid, true });
+		payloads.push_back({ ac3Payload.data(), static_cast<uint16_t>(ac3Payload.size()), audioPid, true });
+		std::ostringstream videoRawData;
+		videoRawData.write(reinterpret_cast<const char*>(videoRawData1.data()), videoRawData1.size());
+		std::ostringstream audioRawData;
+		audioRawData.write(reinterpret_cast<const char*>(ac3RawData.data()), ac3RawData.size());
+		ExpectedResult expected{ Error::OK, 1, 1, audioRawData.str(), videoRawData.str() };
+		failures += 1 - runTest("parse_Ac3AndVideoPayloadsWithPmt_OK", payloads, expected);
+	}
 
 	return failures;
 }

@@ -102,7 +102,7 @@ bool TsReader::readFromStream(size_t bufferOffset, size_t size)
 {
 	input_.read(reinterpret_cast<char*>(buffer_.data() + bufferOffset), size);
 
-	const auto read = input_.gcount();
+	const size_t read = input_.gcount();
 	if (read != size)
 	{
 		if (read)

@@ -245,152 +245,188 @@ uint16_t testTsReader()
 	uint16_t failures = 0;
 
 	// Bad input
-	std::stringstream input;
-	input.peek();
-	failures += 1 - runTest("ctor_BadInput_Exception", input, Error::CONSTRUCTION_ERROR, "", 0);
+	{
+		std::stringstream input;
+		input.peek();
+		failures += 1 - runTest("ctor_BadInput_Exception", input, Error::CONSTRUCTION_ERROR, "", 0);
+	}
 
 	// 1 video packet, start of elementary stream
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	std::ostringstream payload;
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	failures += 1 - runTest("readAll_Video1Packet_OK", input, Error::OK, payload.str(), 1);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		failures += 1 - runTest("readAll_Video1Packet_OK", input, Error::OK, payload.str(), 1);
+	}
 
 	// 2 video packets, start of elementary stream and continuation
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
-	failures += 1 - runTest("readAll_Video2Packets_OK", input, Error::OK, payload.str(), 1);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
+		failures += 1 - runTest("readAll_Video2Packets_OK", input, Error::OK, payload.str(), 1);
+	}
 
 	// 3 video packets, start of TS is not start of ES
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket3.data()), videoPacket3.size());
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
-	failures += 1 - runTest("readAll_TsStartNotEsStart_OK", input, Error::OK, payload.str(), 1);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket3.data()), videoPacket3.size());
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
+		failures += 1 - runTest("readAll_TsStartNotEsStart_OK", input, Error::OK, payload.str(), 1);
+	}
 
 	// PAT packet and video packet
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(patPacket.data()), patPacket.size());
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(patPayload.data()), patPayload.size());
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	failures += 1 - runTest("readAll_PatAndVideoPackets_OK", input, Error::OK, payload.str(), 2);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(patPacket.data()), patPacket.size());
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(patPayload.data()), patPayload.size());
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		failures += 1 - runTest("readAll_PatAndVideoPackets_OK", input, Error::OK, payload.str(), 2);
+	}
 
 	// null packet and video packet
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(nullPacket.data()), nullPacket.size());
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	failures += 1 - runTest("readAll_NullAndVideoPackets_OK", input, Error::OK, payload.str(), 1);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(nullPacket.data()), nullPacket.size());
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		failures += 1 - runTest("readAll_NullAndVideoPackets_OK", input, Error::OK, payload.str(), 1);
+	}
 
 	// 1 audio packet, start of elementary stream
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
-	failures += 1 - runTest("readAll_Audio1Packet_OK", input, Error::OK, payload.str(), 1);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
+		failures += 1 - runTest("readAll_Audio1Packet_OK", input, Error::OK, payload.str(), 1);
+	}
 
 	// 2 audio packets, start of elementary stream and continuation
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
-	input.write(reinterpret_cast<const char*>(audioPacket2.data()), audioPacket2.size());
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
-	payload.write(reinterpret_cast<const char*>(audioPayload2.data()), audioPayload2.size());
-	failures += 1 - runTest("readAll_Audio2Packets_OK", input, Error::OK, payload.str(), 1);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
+		input.write(reinterpret_cast<const char*>(audioPacket2.data()), audioPacket2.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
+		payload.write(reinterpret_cast<const char*>(audioPayload2.data()), audioPayload2.size());
+		failures += 1 - runTest("readAll_Audio2Packets_OK", input, Error::OK, payload.str(), 1);
+	}
 
 	// 2 elementary streams
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
-	input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
-	input.write(reinterpret_cast<const char*>(audioPacket2.data()), audioPacket2.size());
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
-	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
-	payload.write(reinterpret_cast<const char*>(audioPayload2.data()), audioPayload2.size());
-	failures += 1 - runTest("readAll_AudioAndVideoPackets_OK", input, Error::OK, payload.str(), 2);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
+		input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
+		input.write(reinterpret_cast<const char*>(audioPacket2.data()), audioPacket2.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
+		payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
+		payload.write(reinterpret_cast<const char*>(audioPayload2.data()), audioPayload2.size());
+		failures += 1 - runTest("readAll_AudioAndVideoPackets_OK", input, Error::OK, payload.str(), 2);
+	}
 
 	// short input
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() / 2);
-	failures += 1 - runTest("readAll_ShortInput_OK", input, Error::OK, "", 0);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() / 2);
+		failures += 1 - runTest("readAll_ShortInput_OK", input, Error::OK, "", 0);
+	}
 
 	// empty input
-	input.swap(std::stringstream());
-	failures += 1 - runTest("readAll_EmptyInput_OK", input, Error::OK, "", 0);
+	{
+		std::stringstream input;
+		failures += 1 - runTest("readAll_EmptyInput_OK", input, Error::OK, "", 0);
+	}
 
 	// not a TS stream
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() - 20);
-	input.write(reinterpret_cast<const char*>(videoPacket1.data() + 10), videoPacket1.size() - 20);
-	failures += 1 - runTest("readAll_NotTsStream_OK", input, Error::OK, "", 0);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() - 20);
+		input.write(reinterpret_cast<const char*>(videoPacket1.data() + 10), videoPacket1.size() - 20);
+		failures += 1 - runTest("readAll_NotTsStream_OK", input, Error::OK, "", 0);
+	}
 
 	// corrupted TS start with sync byte
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket3.data()), videoPacket3.size() / 2);
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
-	failures += 1 - runTest("readAll_CorruptedTsStartWithSyncByte_OK", input, Error::OK, payload.str(), 1);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket3.data()), videoPacket3.size() / 2);
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
+		failures += 1 - runTest("readAll_CorruptedTsStartWithSyncByte_OK", input, Error::OK, payload.str(), 1);
+	}
 
 	// corrupted TS start without sync byte
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() / 2);
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
-	failures += 1 - runTest("readAll_CorruptedTsStartWithoutSyncByte_OK", input, Error::OK, payload.str(), 1);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() / 2);
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
+		failures += 1 - runTest("readAll_CorruptedTsStartWithoutSyncByte_OK", input, Error::OK, payload.str(), 1);
+	}
 
 	// corrupted TS end with sync byte
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
-	input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size() / 2);
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
-	failures += 1 - runTest("readAll_CorruptedTsEndWithSyncByte_OK", input, Error::OK, payload.str(), 2);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
+		input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size() / 2);
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		payload.write(reinterpret_cast<const char*>(audioPayload1.data()), audioPayload1.size());
+		failures += 1 - runTest("readAll_CorruptedTsEndWithSyncByte_OK", input, Error::OK, payload.str(), 2);
+	}
 
 	// corrupted TS end without sync byte, last packet preceeding garbage is lost
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
-	input.write(reinterpret_cast<const char*>(videoPacket2.data() + 10), videoPacket2.size() / 2);
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	failures += 1 - runTest("readAll_CorruptedTsEndWithoutSyncByte_OK", input, Error::OK, payload.str(), 1);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		input.write(reinterpret_cast<const char*>(audioPacket1.data()), audioPacket1.size());
+		input.write(reinterpret_cast<const char*>(videoPacket2.data() + 10), videoPacket2.size() / 2);
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		failures += 1 - runTest("readAll_CorruptedTsEndWithoutSyncByte_OK", input, Error::OK, payload.str(), 1);
+	}
 
 	// corrupted TS middle with sync byte
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	input.write(reinterpret_cast<const char*>(videoPacket3.data()), videoPacket3.size() / 2);
-	input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
-	payload.swap(std::ostringstream());
-	payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
-	payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
-	failures += 1 - runTest("readAll_CorruptedTsMiddleWithSyncByte_OK", input, Error::OK, payload.str(), 1);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		input.write(reinterpret_cast<const char*>(videoPacket3.data()), videoPacket3.size() / 2);
+		input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
+		std::ostringstream payload;
+		payload.write(reinterpret_cast<const char*>(videoPayload1.data()), videoPayload1.size());
+		payload.write(reinterpret_cast<const char*>(videoPayload2.data()), videoPayload2.size());
+		failures += 1 - runTest("readAll_CorruptedTsMiddleWithSyncByte_OK", input, Error::OK, payload.str(), 1);
+	}
 
 	// corrupted TS middle without sync byte, last packet preceeding garbage is lost
-	input.swap(std::stringstream());
-	input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
-	input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() / 2);
-	input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
-	failures += 1 - runTest("readAll_CorruptedTsMiddleWithoutSyncByte_OK", input, Error::OK, "", 0);
+	{
+		std::stringstream input;
+		input.write(reinterpret_cast<const char*>(videoPacket1.data()), videoPacket1.size());
+		input.write(reinterpret_cast<const char*>(videoPacket3.data() + 10), videoPacket3.size() / 2);
+		input.write(reinterpret_cast<const char*>(videoPacket2.data()), videoPacket2.size());
+		failures += 1 - runTest("readAll_CorruptedTsMiddleWithoutSyncByte_OK", input, Error::OK, "", 0);
+	}
 	
 	return failures;
 }
