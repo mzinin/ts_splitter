@@ -5,6 +5,7 @@
 #include <functional>
 #include <map>
 #include <ostream>
+#include <set>
 
 
 /// @class PayloadParser.
@@ -27,6 +28,15 @@ public:
 	void parse(const TsPayload& payload);
 
 private:
+	/// @brief Parse payload with program association table.
+	/// @param[in] payload - TS payload.
+	void parsePat(const TsPayload& payload);
+
+	/// @brief Parse payload with raw data.
+	/// @details Calls handler, which may throws exceptions.
+	/// @param[in] payload - TS payload.
+	void parseDataPayload(const TsPayload& payload);
+
 	/// @brief Parse PES header.
 	/// @param[in] payload - TS payload.
 	/// @param[out] offset - Raw data offset within payload.
@@ -64,4 +74,10 @@ private:
 
 	/// @brief Number of detected video streams.
 	uint16_t videoSeqNumber_ = 0;
+
+	/// @brief All detected programs.
+	std::set<uint16_t> detectedPrograms_;
+
+	/// @brief Set of pids with program map tables.
+	std::set<uint16_t> pmTablePids_;
 };
