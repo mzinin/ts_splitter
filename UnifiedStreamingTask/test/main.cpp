@@ -10,21 +10,21 @@ extern uint16_t testOutputWriter();
 
 int main()
 {
-	uint16_t failures = 0;
+    uint16_t failures = 0;
 
-	failures += testOutputNameGenerator();
-	failures += testError();
-	failures += testProgramOptions();
-	failures += testTsReader();
-	failures += testPayloadParser();
-	failures += testOutputWriter();
+    failures += testOutputNameGenerator();
+    failures += testError();
+    failures += testProgramOptions();
+    failures += testTsReader();
+    failures += testPayloadParser();
+    failures += testOutputWriter();
 
-	if (failures == 0)
-	{
-		std::cout << "ALL TESTS PASSED" << std::endl;
-		return EXIT_SUCCESS;
-	}
+    if (failures == 0)
+    {
+        std::cout << "ALL TESTS PASSED" << std::endl;
+        return EXIT_SUCCESS;
+    }
 
-	std::cout << failures << " TEST(S) FAILED" << std::endl;
-	return EXIT_FAILURE;
+    std::cout << failures << " TEST(S) FAILED" << std::endl;
+    return EXIT_FAILURE;
 }
