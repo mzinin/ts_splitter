@@ -23,7 +23,7 @@ void TsSplitter::init(int argc, char** argv)
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "Failed to parse command line arguments:\n" << e.what() << "\n" << std::endl;
+		std::cerr << "Error: TsSplitter, failed to parse command line arguments:\n" << e.what() << "\n" << std::endl;
 	}
 }
 
@@ -65,7 +65,7 @@ void TsSplitter::openInput()
 
 	input_.reset(new std::ifstream(fileName, std::ifstream::in | std::ifstream::binary));
 	if (!input_ || !input_->good())
-		throw Error(Error::CONSTRUCTION_ERROR, "failed to open intput file '" + fileName + "'");
+		throw Error(Error::CONSTRUCTION_ERROR, "TsSplitter, failed to open input file '" + fileName + "'");
 }
 
 void TsSplitter::splitInput()

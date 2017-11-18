@@ -26,7 +26,7 @@ OutputWriter::~OutputWriter()
 	}
 	catch (const Error& err)
 	{
-		log_ << "Error: failed to close output streams, " << err.message() << std::endl;
+		log_ << "Error: OutputWriter, failed to close output streams, " << err.message() << std::endl;
 	}
 }
 
@@ -38,7 +38,7 @@ void OutputWriter::write(const EsRawData& rawData)
 
 	output.stream->write(reinterpret_cast<const char*>(rawData.data), rawData.size);
 	if (!output.stream->good())
-		throw Error(Error::CORRUPTED_OUTPUT, "failed to write into file '" + output.file + "'");
+		throw Error(Error::CORRUPTED_OUTPUT, "OutputWriter, failed to write into file '" + output.file + "'");
 }
 
 void OutputWriter::closeOutputs()
@@ -63,7 +63,7 @@ void OutputWriter::closeOutputs()
 	if (!failedFiles.empty())
 	{
 		std::ostringstream msg;
-		msg << "failed to close file(s) ";
+		msg << "OutputWriter, failed to close file(s) ";
 
 		auto end = --failedFiles.cend();
 		for (auto it = failedFiles.cbegin(); it != end; ++it)
@@ -108,7 +108,7 @@ OutputWriter::Output& OutputWriter::chooseOutput(EsType type, uint16_t number)
 	if (!output.stream->good())
 	{
 		output.stream.reset();
-		throw Error(Error::CORRUPTED_OUTPUT, "failed to open file '" + output.file + "' for writing");
+		throw Error(Error::CORRUPTED_OUTPUT, "OutputWriter, failed to open file '" + output.file + "' for writing");
 	}
 
 	return output;

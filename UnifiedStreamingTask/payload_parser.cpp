@@ -194,7 +194,7 @@ void PayloadParser::parseDataPayload(const TsPayload& payload)
 	// packet of unknown stream
 	if (!isPesHeader && streams_.count(payload.pid) == 0)
 	{
-		log_ << "Warning: PayloadParser, incomplete PES packet with pid " << payload.pid << ". Skip it." << std::endl;
+		log_ << "Warning: PayloadParser, incomplete PES packet with pid " << payload.pid << std::endl;
 		return;
 	}
 
@@ -202,7 +202,7 @@ void PayloadParser::parseDataPayload(const TsPayload& payload)
 	uint16_t offset = 0;
 	if (isPesHeader && !parseHeader(payload, offset))
 	{
-		log_ << "Warning: PayloadParser, failed to parse PES packet header. Skip it." << std::endl;
+		log_ << "Warning: PayloadParser, failed to parse PES packet header" << std::endl;
 		return;
 	}
 
@@ -221,6 +221,7 @@ void PayloadParser::parseDataPayload(const TsPayload& payload)
 
 bool PayloadParser::parseHeader(const TsPayload& payload, uint16_t& offset)
 {
+	// if there was no PAT and PMT - try to detect and update streams
 	if (!updateStreams(payload.pid, streamTypeByPes(payload.data[3])))
 		return false;
 
@@ -256,7 +257,7 @@ bool PayloadParser::updateStreams(uint16_t pid, EsType type)
 		if (insertionResult.first->first == pid)
 			return true;
 		// incosistency
-		log_ << "Warning: PayloadParser, different stream ids in the with the same pid." << std::endl;
+		log_ << "Warning: PayloadParser, different stream ids in the with the same pid" << std::endl;
 		return false;
 	}
 

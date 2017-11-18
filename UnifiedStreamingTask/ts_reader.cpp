@@ -83,7 +83,7 @@ bool TsReader::readPacket()
 		if (offset == tsPacketSize)
 		{
 			// no sync byte, that's corrupted packet, move to the next one
-			log_ << "Warning: corrupted TS packet. Skip it." << std::endl;
+			log_ << "Warning: TsReader, corrupted TS packet" << std::endl;
 			break;
 		}
 		else
@@ -106,9 +106,9 @@ bool TsReader::readFromStream(size_t bufferOffset, size_t size)
 	if (read != size)
 	{
 		if (read)
-			log_ << "Warning: corrupted TS packet. Skip it." << std::endl;
+			log_ << "Warning: TsReader, corrupted TS packet" << std::endl;
 		if (!input_.eof())
-			throw Error(Error::CORRUPTED_INPUT, "failed to read");
+			throw Error(Error::CORRUPTED_INPUT, "TsReader, failed to read");
 		return false;
 	}
 	return true;
@@ -121,7 +121,7 @@ void TsReader::processPacket()
 	// check for corrupted packet
 	if (pkt.isCorrupted)
 	{
-		log_ << "Warning: corrupted TS packet. Skip it." << std::endl;
+		log_ << "Warning: TsReader, corrupted TS packet" << std::endl;
 		return;
 	}
 
@@ -157,7 +157,7 @@ bool TsReader::checkEsStarted(uint16_t pid, bool newEsPacket, uint16_t seq)
 	if (it != streams_.end())
 	{
 		if ((it->second + 1) % 0x10 != seq)
-			log_ << "Warning: packet sequence within PID " << pid << " is broken" << std::endl;
+			log_ << "Warning: TsReader, packet sequence within PID " << pid << " is broken" << std::endl;
 		it->second = seq;
 		return true;
 	}
