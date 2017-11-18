@@ -8,6 +8,7 @@ namespace
 {
 	const size_t tsPacketSize = 188;
 	const uint8_t tsSyncByte = 0x47;
+	const uint16_t nullPacketPid = 8191;
 
 	/// @brief Parsed TS packet.
 	struct TsPacket
@@ -35,11 +36,6 @@ namespace
 		}
 	};
 
-	/// @brief Check if packet may contain elementary stream payload.
-	bool mayContainEs(uint16_t pid)
-	{
-		return (32 <= pid && pid <= 8186) || (8188 <= pid && pid <= 8190);
-	}
 }
 
 TsReader::TsReader(std::istream& input, std::ostream& log, OnPayload handler)
@@ -133,8 +129,8 @@ void TsReader::processPacket()
 	if (!pkt.hasPayload)
 		return;
 
-	// check for useful pid
-	if (!mayContainEs(pkt.pid))
+	// skip null packets
+	if (pkt.pid == nullPacketPid)
 		return;
 
 	// check corresponding elementary stream started
@@ -147,7 +143,10 @@ void TsReader::processPacket()
 	payload.data = &buffer_[pkt.payloadOffset];
 	payload.size = tsPacketSize - pkt.payloadOffset;
 	payload.newEsPacket = pkt.newEsPacket;
-	handler_(payload);
+
+	// skip zero-length payloads
+	if (payload.size)
+		handler_(payload);
 }
 
 bool TsReader::checkEsStarted(uint16_t pid, bool newEsPacket, uint16_t seq)
