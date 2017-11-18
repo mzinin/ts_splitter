@@ -146,6 +146,7 @@ void TsReader::processPacket()
 	payload.pid = pkt.pid;
 	payload.data = &buffer_[pkt.payloadOffset];
 	payload.size = tsPacketSize - pkt.payloadOffset;
+	payload.newEsPacket = pkt.newEsPacket;
 	handler_(payload);
 }
 

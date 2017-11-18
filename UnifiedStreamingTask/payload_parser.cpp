@@ -29,7 +29,8 @@ PayloadParser::PayloadParser(std::ostream& log, OnEsRawData handler)
 
 void PayloadParser::parse(const TsPayload& payload)
 {
-	const bool isPesHeader = hasPesHeader(payload);
+	// check PES header only if payload has corresponding flag
+	const bool isPesHeader = payload.newEsPacket && hasPesHeader(payload);
 
 	// packet of unknown stream
 	if (!isPesHeader && streams_.count(payload.pid) == 0)

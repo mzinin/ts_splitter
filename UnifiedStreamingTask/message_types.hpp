@@ -15,6 +15,9 @@ struct TsPayload
 
 	/// @brief Corresponding PID.
 	uint16_t pid;
+
+	/// @brief Flag for ES packet start.
+	bool newEsPacket;
 };
 
 /// @brief Type of raw data output.
