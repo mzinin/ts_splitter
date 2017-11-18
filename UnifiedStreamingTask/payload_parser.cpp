@@ -16,6 +16,51 @@ namespace
 	/// @brief Minimum size of PAT.
 	const uint16_t minPaTableSize = 8;
 
+	/// @brief Program map table id.
+	const uint8_t pmTableId = 2;
+
+	/// @brief Table name by id.
+	const std::string& tableName(uint8_t id)
+	{
+		static const std::string pat = "PAT";
+		static const std::string pmt = "PMT";
+		static const std::string unknown = "Unknown";
+
+		switch (id)
+		{
+		case paTableId:
+			return pat;
+		case pmTableId:
+			return pmt;
+		}
+		return unknown;
+	}
+
+	/// @brief ES type by stream id from PMT.
+	EsType streamTypeByPmt(uint8_t typeId)
+	{
+		// According https://en.wikipedia.org/wiki/Program-specific_information#Elementary_stream_types
+		static std::set<uint8_t> audioStreams{ 0x03, 0x04, 0x0F, 0x11, 0x1C, 0x80, 0x81, 0x82, 0x83,
+			                                   0x84, 0x85, 0x86, 0x87, 0x91, 0xC1, 0xC2, 0xCF };
+		static std::set<uint8_t> videoStreams{ 0x01, 0x02, 0x10, 0x1B, 0x24, 0x42, 0xD1, 0xDB, 0xEA };
+
+		if (audioStreams.count(typeId))
+			return EsType::AUDIO;
+		if (videoStreams.count(typeId))
+			return EsType::VIDEO;
+		return EsType::OTHER;
+	}
+
+	/// @brief ES type by stream id from PES header.
+	EsType streamTypeByPes(uint8_t streamId)
+	{
+		if (0xC0 <= streamId && streamId <= 0xDF)
+			return EsType::AUDIO;
+		else if (0xE0 <= streamId && streamId <= 0xEF)
+			return EsType::VIDEO;
+		return EsType::OTHER;
+	}
+
 	/// @brief Check if payload contains PES header.
 	bool hasPesHeader(const TsPayload& payload)
 	{
@@ -57,43 +102,16 @@ void PayloadParser::parse(const TsPayload& payload)
 {
 	if (payload.pid == paTablePid)
 		parsePat(payload);
+	else if (pmTablePids_.count(payload.pid))
+		parsePmt(payload);
 	else
 		parseDataPayload(payload);
 }
 
 void PayloadParser::parsePat(const TsPayload& payload)
 {
-	// PAT offset within payload
-	const uint16_t offset = 1 + payload.data[0];
-	if (payload.size < offset)
-	{
-		log_ << "Warning: PayloadParser, corrupted PAT." << std::endl;
-		return;
-	}
-	if (payload.data[offset] != paTablePid)
-	{
-		log_ << "Warning: PayloadParser, PAT has wrong table id." << std::endl;
-		return;
-	}
-
-	const uint16_t sectionSize = ((payload.data[offset + 1] & 0x0F) << 8) + payload.data[offset + 2];
-	if (payload.size < sectionSize + 4)
-	{
-		log_ << "Warning: PayloadParser, corrupted PAT." << std::endl;
-		return;
-	}
-
-	// check CRC
-	const uint8_t* crcData = payload.data + 4 + sectionSize - 4;
-	const uint32_t crc = (((((uint32_t(crcData[0]) << 8) + crcData[1]) << 8) + crcData[2]) << 8) + crcData[3];
-	if (crc32(payload.data + 1, crcData - payload.data - 1) != crc)
-	{
-		log_ << "Warning: PayloadParser, corrupted PAT." << std::endl;
-		return;
-	}
-
-	// this table is not applicable
-	if (!(payload.data[offset + 5] & 0x01))
+	uint16_t offset = 0, sectionSize = 0;
+	if (!checkTablePayload(payload, paTableId, offset, sectionSize))
 		return;
 
 	// section starts 4 bytes from payload start, 4 bytes for CRC
@@ -108,6 +126,64 @@ void PayloadParser::parsePat(const TsPayload& payload)
 				pmTablePids_.insert(((payload.data[i + 2] & 0x1F) << 8) + payload.data[i + 3]);
 		}
 	}
+}
+
+void PayloadParser::parsePmt(const TsPayload& payload)
+{
+	uint16_t offset = 0, sectionSize = 0;
+	if (!checkTablePayload(payload, pmTableId, offset, sectionSize))
+		return;
+
+	const uint16_t programInfoLength = ((payload.data[offset + 10] & 0x0F) << 8) + payload.data[offset + 11];
+	auto i = offset + 12 + programInfoLength;
+
+	// section starts 4 bytes from payload start, 4 bytes for CRC
+	while (i < sectionSize + 4 - 4)
+	{
+		const EsType type = streamTypeByPmt(payload.data[i]);
+		const uint16_t pid = ((payload.data[i + 1] & 0x1F) << 8) + payload.data[i + 2];
+		updateStreams(pid, type);
+		i += 5 + ((payload.data[i + 3] & 0x0F) << 8) + payload.data[i + 4];
+	}
+}
+
+bool PayloadParser::checkTablePayload(const TsPayload& payload, uint8_t tableId, uint16_t& offset, uint16_t& sectionSize)
+{
+	// offset within payload
+	offset = 1 + payload.data[0];
+	if (payload.size < offset)
+	{
+		log_ << "Warning: PayloadParser, corrupted " << tableName(tableId) << std::endl;
+		return false;
+	}
+	if (payload.data[offset] != tableId)
+	{
+		log_ << "Warning: PayloadParser, " << tableName(tableId) << " has wrong table id" << std::endl;
+		return false;
+	}
+
+	// check size
+	sectionSize = ((payload.data[offset + 1] & 0x0F) << 8) + payload.data[offset + 2];
+	if (payload.size < sectionSize + 4)
+	{
+		log_ << "Warning: PayloadParser, corrupted " << tableName(tableId) << std::endl;
+		return false;
+	}
+
+	// check CRC
+	const uint8_t* crcData = payload.data + 4 + sectionSize - 4;
+	const uint32_t crc = (((((uint32_t(crcData[0]) << 8) + crcData[1]) << 8) + crcData[2]) << 8) + crcData[3];
+	if (crc32(payload.data + 1, crcData - payload.data - 1) != crc)
+	{
+		log_ << "Warning: PayloadParser, corrupted PAT" << tableName(tableId) << std::endl;
+		return false;
+	}
+
+	// this table is not applicable
+	if (!(payload.data[offset + 5] & 0x01))
+		return false;
+
+	return true;
 }
 
 void PayloadParser::parseDataPayload(const TsPayload& payload)
@@ -145,7 +221,7 @@ void PayloadParser::parseDataPayload(const TsPayload& payload)
 
 bool PayloadParser::parseHeader(const TsPayload& payload, uint16_t& offset)
 {
-	if (!updateStreams(payload.pid, payload.data[3]))
+	if (!updateStreams(payload.pid, streamTypeByPes(payload.data[3])))
 		return false;
 
 	// payload contains only PES header
@@ -170,9 +246,9 @@ bool PayloadParser::parseHeader(const TsPayload& payload, uint16_t& offset)
 	return payload.size >= offset;
 }
 
-bool PayloadParser::updateStreams(uint16_t pid, uint8_t streamId)
+bool PayloadParser::updateStreams(uint16_t pid, EsType type)
 {
-	const auto insertionResult = streams_.insert({ pid, StreamInfo() });
+	const auto insertionResult = streams_.insert({ pid, StreamInfo{type, 0} });
 
 	// playload from some known stream
 	if (!insertionResult.second)
@@ -184,18 +260,20 @@ bool PayloadParser::updateStreams(uint16_t pid, uint8_t streamId)
 		return false;
 	}
 
-	if (0xC0 <= streamId && streamId <= 0xDF)
+	switch (type)
 	{
-		insertionResult.first->second.type = EsType::AUDIO;
+	case EsType::AUDIO:
 		insertionResult.first->second.seqNumber = ++audioSeqNumber_;
-	}
-	else if (0xE0 <= streamId && streamId <= 0xEF)
-	{
-		insertionResult.first->second.type = EsType::VIDEO;
+		log_ << "Notice: PayloadParser, detected AUDIO stream with pid " << pid << std::endl;
+		break;
+	case EsType::VIDEO:
 		insertionResult.first->second.seqNumber = ++videoSeqNumber_;
+		log_ << "Notice: PayloadParser, detected VIDEO stream with pid " << pid << std::endl;
+		break;
+	default:
+		log_ << "Notice: PayloadParser, detected unsupported stream with pid " << pid << std::endl;
+		break;
 	}
-	else
-		insertionResult.first->second.type = EsType::OTHER;
 
 	return true;
 }

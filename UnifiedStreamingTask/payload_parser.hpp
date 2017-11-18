@@ -32,6 +32,21 @@ private:
 	/// @param[in] payload - TS payload.
 	void parsePat(const TsPayload& payload);
 
+	/// @brief Parse payload with program map table.
+	/// @param[in] payload - TS payload.
+	void parsePmt(const TsPayload& payload);
+
+	/// @brief Check table's payload for id and size.
+	/// @param[in] payload - TS payload.
+	/// @param[in] tableId - Expected table id.
+	/// @param[out] offset - Table offset within payload.
+	/// @param[out] sectionSize - Table section size.
+	/// @returns true is check succeeded, false otherwise.
+	bool checkTablePayload(const TsPayload& payload,
+		                   uint8_t tableId,
+		                   uint16_t& offset,
+		                   uint16_t& sectionSize);
+
 	/// @brief Parse payload with raw data.
 	/// @details Calls handler, which may throws exceptions.
 	/// @param[in] payload - TS payload.
@@ -45,9 +60,9 @@ private:
 
 	/// @brief Add new stream to the set of known ones if needed.
 	/// @param[in] pid - Corresponding pid in TS stream.
-	/// @param[in] pid - ES stream id.
+	/// @param[in] type - ES tream type.
 	/// @returns false if ids inconsistency detected, true otherwise.
-	bool updateStreams(uint16_t pid, uint8_t streamId);
+	bool updateStreams(uint16_t pid, EsType type);
 
 private:
 	/// @brief Log output stream.
