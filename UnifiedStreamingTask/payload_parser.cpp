@@ -175,7 +175,7 @@ bool PayloadParser::checkTablePayload(const TsPayload& payload, uint8_t tableId,
 	const uint32_t crc = (((((uint32_t(crcData[0]) << 8) + crcData[1]) << 8) + crcData[2]) << 8) + crcData[3];
 	if (crc32(payload.data + 1, crcData - payload.data - 1) != crc)
 	{
-		log_ << "Warning: PayloadParser, corrupted PAT" << tableName(tableId) << std::endl;
+		log_ << "Warning: PayloadParser, corrupted " << tableName(tableId) << std::endl;
 		return false;
 	}
 
