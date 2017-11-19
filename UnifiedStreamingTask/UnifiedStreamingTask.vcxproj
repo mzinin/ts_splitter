@@ -23,6 +23,7 @@
     <ProjectGuid>{84A7F1E3-742F-42D0-B974-FFDC8ABC401B}</ProjectGuid>
     <RootNamespace>UnifiedStreamingTask</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <ProjectName>ts_splitter</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -23,6 +23,7 @@
     <ProjectGuid>{5EFC6018-6F93-4994-8376-F7E87ADEEB4E}</ProjectGuid>
     <RootNamespace>UnitTests</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <ProjectName>ts_splitter_test</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
