@@ -5,7 +5,7 @@ ts_splitter is a simple util to split [MPEG-TS](https://en.wikipedia.org/wiki/MP
 
 Building the project will result in creating two executable files &mdash; `ts_splitter` and `ts_splitter_test` (with `.exe` extension on Windows). The former one is the util itself, the letter one is set of unit tests.
 
-## Prequisites
+## Prerequisites
 
     C++ compiler with C++11 support.
     VS2017 or GNU Make.
